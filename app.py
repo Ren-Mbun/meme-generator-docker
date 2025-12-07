@@ -13,27 +13,35 @@ def draw_text_on_image(img_path, top_text, bottom_text, out_path):
     W, H = image.size
     draw = ImageDraw.Draw(image)
 
-    # izbira pisave (velikost odvisna od širine slike)
     try:
-        font_size = int(W / 10)
-        font = ImageFont.truetype(FONT_PATH, font_size)
+        # osnovna velikost pisave (približno 1/10 širine slike)
+        base_font_size = int(W / 10)
+        font = ImageFont.truetype(FONT_PATH, base_font_size)
     except Exception:
         font = ImageFont.load_default()
+        base_font_size = 20
 
-    # funkcija za risanje obrobe + teksta (outline)
+    def get_dynamic_font(text, max_width, max_font_size):
+        font_size = max_font_size
+        fnt = ImageFont.truetype(FONT_PATH, font_size)
+        while draw.textlength(text, font=fnt) > max_width and font_size > 10:
+            font_size -= 1
+            fnt = ImageFont.truetype(FONT_PATH, font_size)
+        return fnt
+
     def draw_text_with_outline(text, x, y, font, fill="white", stroke_fill="black", stroke_width=3):
         draw.text((x, y), text, font=font, fill=fill, stroke_fill=stroke_fill, stroke_width=stroke_width, anchor="ms")
 
-    # zgornji tekst - centrirano pri vrhu
+    # zgornji tekst
     if top_text:
-        # razporedi več vrstic, če je predolg
-        draw_text_with_outline(top_text.upper(), W/2, int(font_size * 1.5), font)
+        top_font = get_dynamic_font(top_text.upper(), W * 0.9, base_font_size)
+        draw_text_with_outline(top_text.upper(), W/2, top_font.size, top_font)
 
-    # spodnji tekst - centrirano pri dnu
+    # spodnji tekst
     if bottom_text:
-        draw_text_with_outline(bottom_text.upper(), W/2, H - int(font_size * 0.6), font)
+        bottom_font = get_dynamic_font(bottom_text.upper(), W * 0.9, base_font_size)
+        draw_text_with_outline(bottom_text.upper(), W/2, H - bottom_font.size, bottom_font)
 
-    # shrani kot PNG
     image.convert("RGB").save(out_path, format="JPEG", quality=95)
 
 @app.route("/", methods=["GET", "POST"])
