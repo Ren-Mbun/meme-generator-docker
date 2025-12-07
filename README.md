@@ -1,4 +1,4 @@
-#1. Meme Generator – Docker aplikacija
+1. Meme Generator – Docker aplikacija
 
 Ta projekt predstavlja spletno aplikacijo Meme Generator, ki omogoča nalaganje slike ter dodajanje zgornjega in spodnjega besedila na sliko.  
 Aplikacija je razvita v programskem jeziku Python z uporabo ogrodja Flask in knjižnice Pillow za obdelavo slik.  
