@@ -11,3 +11,5 @@ ENV PORT=5000
 EXPOSE 5000
 
 CMD ["python", "app.py"]
+
+RUN apt-get update && apt-get install -y fonts-dejavu
